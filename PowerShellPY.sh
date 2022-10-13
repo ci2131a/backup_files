@@ -1,1 +1,0 @@
-python D:\Repos\DirectoryStructureCopy\DirectoryStructureCopy.py
