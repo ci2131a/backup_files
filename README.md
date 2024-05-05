@@ -1,7 +1,7 @@
 # backup_files
 
 
-The goal of this program is to ensure an extra copy of data is stored in another location. This is done through the `Backup_Files` function which takes one directory to be the source and another to be the target and iteratively updates files in the target directory such that they match the source directory. This program has been helpful to backup the large quantities of video files from video game clips that are created, deleted, and reorganized over time. 
+The goal of this program is to ensure an extra copy of data is stored in another location. This is done through the `backup_files` function which takes one directory to be the source and another to be the target and iteratively updates files in the target directory such that they match the source directory. This program has been helpful to backup the large quantities of video files from video game clips that are created, deleted, and reorganized over time. 
 
 The program was originally written in Python with some assistance from JT who showed me to improve the program using recursive functions and how to make shell scripts to execute the program. Subsequently, I translated our program to R as a personal exercise. 
 
