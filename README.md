@@ -1,4 +1,4 @@
-# Backup_Files
+# backup_files
 
 
 The goal of this program is to ensure an extra copy of data is stored in another location. This is done through the `Backup_Files` function which takes one directory to be the source and another to be the target and iteratively updates files in the target directory such that they match the source directory. This program has been helpful to backup the large quantities of video files from video game clips that are created, deleted, and reorganized over time. 
@@ -11,7 +11,7 @@ The program was originally written in Python with some assistance from JT who sh
 
 The original program exists in the following file:
 
-* `Backup_Files.py`
+* `backup_files.py`
 
 It defines the function and executes the backup process while also tracking the approximate time to completion.
 
