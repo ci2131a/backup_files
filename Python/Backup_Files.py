@@ -15,8 +15,8 @@
 # Be sure to include \\ between each subdirectory
 # as Python requires this convention.
 
-sourcedrive = 'D:\\Source'
-targetdrive = 'H:\\Target'
+sourcedrive = 'P:\\Nunu'
+targetdrive = 'H:\\P\\Nunu'
 
 import time
 start_time = time.time()
@@ -25,7 +25,7 @@ from os import listdir, remove, mkdir
 from os.path import isdir, isfile
 from filecmp import cmp
 
-def Backup_Files(source, target):
+def backup_files(source, target):
   
   dirsource = set(listdir(source))
   dirtarget = set(listdir(target))
@@ -52,7 +52,7 @@ def Backup_Files(source, target):
         copyfile(sourcepath, targetpath)
         
   
-Backup_Files(sourcedrive,targetdrive)
+backup_files(sourcedrive,targetdrive)
 
 print("--- %s seconds ---" % (time.time() - start_time))
 
