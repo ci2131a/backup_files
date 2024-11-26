@@ -3,7 +3,7 @@
 
 The goal of this program is to ensure an extra copy of data is stored in another location. This is done through the `backup_files` function which takes one directory to be the source and another to be the target and iteratively updates files in the target directory such that they match the source directory. This program has been helpful to backup the large quantities of video files from video game clips that are created, deleted, and reorganized over time. 
 
-The program was originally written in Python with some assistance from JT who showed me to improve the program using recursive functions and how to make shell scripts to execute the program. Subsequently, I translated our program to R as a personal exercise. I also used this project as an exercise for programming with AI. In that regard, some functions were entirely developed by ChatGPT and some drew inspiration from code or packages that were suggested through talking with the AI about what this project is. 
+The program was originally written in Python with some assistance from JT who showed me to improve the program using recursive functions and how to make shell scripts to execute the program. Subsequently, I translated our program to R as a personal exercise. I also used this project as an exercise for programming with AI. In that regard, some functions were entirely developed by ChatGPT and some drew inspiration from code or packages that were suggested through discussion of the project with the AI. 
 
 ## Repository Organization
 
@@ -19,7 +19,7 @@ Some Python code for creating backups:
 
 Some R code for creating backups:
 
-* `backup_files.r` - an R version of the original program `backup_files.py` that was translated from Python
+* `backup_files.r` - an R version of the original program `backup_files.py` that was translated from Python and reviewed using ChatGPT.
 * `copy_and_delete.r` - an implementation of the AI `copy_and_delete.py` in R using the `fs` package.
 * `create_backup.r` - a backup program that creates a `.zip` file in a directory to serve as backup. Initially pitched by ChatGPT as a way to backup in R.
 
