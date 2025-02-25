@@ -1,57 +1,84 @@
-#Define function
+# Define negate operator
+`%nin%` <- Negate(`%in%`)
 
-# main function
-backup_files <- function(source_directory, target_directory){
-  
-  # define start time for duration
-  start <- Sys.time()
-  
-  # run backup function
-  backup_actual(sourcedrive = source_directory, targetdrive = target_directory)
-  
-  # define stop time for duration
-  stop <- Sys.time()
-  cat("Backup took approximately:", (stop - start)[[1]], "seconds.")
+# Logging function
+log_message <- function(message, level = "INFO") {
+  cat(sprintf("[%s] %s: %s\n", Sys.time(), level, message))
 }
 
-
-
-backup_actual <- function(sourcedrive, targetdrive){
-  
-  # define negate
-  `%nin%` <- Negate(`%in%`)
-  
-  # run deletions
-  for (dirr in dir(targetdrive)){
-    # check if directory in target still exists in source
-    print(paste0("Working in ",dirr))
-    if((dirr %nin% dir(sourcedrive))){
-      # if it does not then delete
-      target.sub.path <- paste0(targetdrive, "\\", dirr)
-      unlink(target.sub.path, recursive = TRUE)
+# Main function to perform the backup
+backup_files <- function(source_directory, target_directory, print_output = TRUE) {
+  # Measure the time taken for the backup process
+  elapsed_time <- system.time({
+    if (print_output){
+      log_message("Starting backup...")
     }
-  } # otherwise move on
+    backup_actual(source_directory, target_directory, print_output)
+  })
+  if (print_output){
+    log_message(sprintf("Backup took approximately: %.2f seconds.", elapsed_time[["elapsed"]]))
+  }
+}
+
+# Helper function to perform the actual backup
+backup_actual <- function(source_directory, target_directory, print_output) {
+  # Run deletions for directories not present in source
+  handle_deletions(source_directory, target_directory, print_output)
   
-  
-  for (dirr in dir(sourcedrive)){ # look at item in source directory 
-    source.sub.path <- paste0(sourcedrive, "\\", dirr) # define path to item in source
-    target.sub.path <- paste0(targetdrive, "\\", dirr) # define path to item in target
-    print(paste0("Working in ", dirr))
-    if (dirr %in% list.dirs(sourcedrive, full.names = FALSE, recursive = FALSE)){ # if item is a directory
-      if (dirr %nin% dir(targetdrive)){ # if item in source is not in target
-        dir.create(target.sub.path, showWarnings = FALSE) # create the directory
-      } # otherwise we assume it is a file in which case we need to copy 
-      backup_actual(source.sub.path,target.sub.path) # and rerun the function step for the sub directory
-    }# lastly we copy over files that are not in target but in source OR were changed in source
-    if(dirr %nin% list.dirs(sourcedrive, full.names = FALSE, recursive = FALSE)){ # if the item is not a directory (ie a file)
-      if (dirr %nin% dir(targetdrive)){ # if item in source is not in target{
-        file.copy(from = source.sub.path, to = target.sub.path)# note: I still make sure that it is not a directory in my if statement
+  # Iterate over items in source directory
+  for (item in dir(source_directory)) {
+    source_sub_path <- file.path(source_directory, item)
+    target_sub_path <- file.path(target_directory, item)
+    
+    # print status message of working directory if enabled
+    if (print_output){
+      log_message(sprintf("Working in %s", item))
+    }
+    
+    if (dir.exists(source_sub_path)) {
+      if (!dir.exists(target_sub_path)) {
+        # create directory in target that is in source if it does not exist in target
+        dir.create(target_sub_path, showWarnings = FALSE)
       }
-      if(tools::md5sum(source.sub.path) != tools::md5sum(target.sub.path)){ # and if the item is different in source and target
-        file.copy(from = source.sub.path, to = target.sub.path, overwrite = TRUE) # then copy over the source (since it has been updated)
-      }
+      # recursively run the function to perform previous operations on current directories
+      backup_actual(source_sub_path, target_sub_path, print_output)
+    } else {
+      handle_file_copy(source_sub_path, target_sub_path, print_output)
     }
   }
 }
 
+# Function to handle deletions
+handle_deletions <- function(source_directory, target_directory, print_output) {
+  for (dir_name in dir(target_directory)) {
+    if (dir_name %nin% dir(source_directory)) {
+      target_sub_path <- file.path(target_directory, dir_name)
+      if (print_output){
+        log_message(sprintf("Deleting %s", target_sub_path), level = "WARN")
+      }
+      tryCatch({
+        unlink(target_sub_path, recursive = TRUE)
+      }, error = function(e) {
+        log_message(sprintf("Failed to delete %s: %s", target_sub_path, e$message), level = "ERROR")
+      })
+    }
+  }
+}
 
+# Function to handle file copy
+handle_file_copy <- function(source_sub_path, target_sub_path, print_output) {
+  if (!file.exists(target_sub_path) || tools::md5sum(source_sub_path) != tools::md5sum(target_sub_path)) {
+    if (print_output){
+      log_message(sprintf("Copying file from %s to %s", source_sub_path, target_sub_path))
+    }
+    tryCatch({
+      file.copy(from = source_sub_path, to = target_sub_path, overwrite = TRUE)
+    }, error = function(e) {
+      log_message(sprintf("Failed to copy file from %s to %s: %s", source_sub_path, target_sub_path, e$message), level = "ERROR")
+    })
+  }
+}
+
+# Example usage
+# backup_files("path/to/source_directory", "path/to/target_directory")
+#backup_files("D:\\Backup Project\\Test\\Source", "D:\\Backup Project\\Test\\Backup", print_output = F)
